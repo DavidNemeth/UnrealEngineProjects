@@ -3,16 +3,16 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "TickActor.generated.h"
+#include "CoreActor.generated.h"
 
 UCLASS()
-class BASICS_API ATickActor : public AActor
+class BASICS_API ACoreActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATickActor();
+	ACoreActor();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
