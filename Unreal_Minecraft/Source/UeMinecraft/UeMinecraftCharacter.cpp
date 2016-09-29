@@ -271,7 +271,7 @@ void AUeMinecraftCharacter::OnHit()
 	PlayHitAnim();
 
 	if (CurrentBlock != nullptr)
-	{		
+	{
 		bIsBreaking = true;
 
 		float TimeBetweenBreak = ((CurrentBlock->Resistance) / 100.0f) / 2;
@@ -322,7 +322,10 @@ void AUeMinecraftCharacter::CheckForBlocks()
 	GetWorld()->LineTraceSingleByChannel(LinetraceHit, StartTrace, EndTrace, ECollisionChannel::ECC_WorldDynamic, CQP);
 
 	ABlock* PotentialBlock = Cast<ABlock>(LinetraceHit.GetActor());
-
+	if (PotentialBlock != CurrentBlock && CurrentBlock != nullptr)
+	{
+		CurrentBlock->ResetBlock();
+	}
 	if (PotentialBlock == NULL)
 	{
 		CurrentBlock = nullptr;
@@ -330,8 +333,11 @@ void AUeMinecraftCharacter::CheckForBlocks()
 	}
 	else
 	{
+		if (CurrentBlock != nullptr && !bIsBreaking)
+		{
+			CurrentBlock->ResetBlock();
+		}
 		CurrentBlock = PotentialBlock;
-
 	}
 }
 
