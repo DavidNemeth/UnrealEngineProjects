@@ -9,15 +9,7 @@ class UInputComponent;
 UCLASS(config=Game)
 class AUeMinecraftCharacter : public ACharacter
 {
-	GENERATED_BODY()
-
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
-	class USkeletalMeshComponent* Mesh1P;
-
-	/** Gun mesh: 1st person view (seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* FP_WieldedItem;
+	GENERATED_BODY()	
 
 	/** Location on gun mesh where projectiles should spawn. */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
@@ -48,6 +40,14 @@ public:
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime) override;
+
+	/** Pawn mesh: 1st person view (arms; seen only by self) */
+	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
+	class USkeletalMeshComponent* Mesh1P;
+
+	/** Gun mesh: 1st person view (seen only by self) */
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class USkeletalMeshComponent* FP_WieldedItem;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -155,9 +155,11 @@ private:
 
 	/*Timer handles*/
 	FTimerHandle BlockBreakingHandle;
-	FTimerHandle HitAnimHandle;
+	FTimerHandle HitAnimHandle;	
 
 public:
+	uint8 ToolType;	
+	uint8 MaterialType;
 	/** Returns Mesh1P subobject **/
 	FORCEINLINE class USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
