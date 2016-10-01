@@ -6,7 +6,6 @@ public class UeMinecraft : ModuleRules
 {
     public UeMinecraft(TargetInfo Target)
     {
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG" });
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Slate", "SlateCore" });
     }
 }
