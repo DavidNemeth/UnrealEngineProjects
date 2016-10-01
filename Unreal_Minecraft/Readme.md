@@ -5,3 +5,4 @@ Progress list:
 -pickaxe    
 -wieldable
 -pickups(+type and material)
+-working hud
