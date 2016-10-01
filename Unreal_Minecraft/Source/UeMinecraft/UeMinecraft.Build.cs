@@ -4,8 +4,9 @@ using UnrealBuildTool;
 
 public class UeMinecraft : ModuleRules
 {
-	public UeMinecraft(TargetInfo Target)
-	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
-	}
+    public UeMinecraft(TargetInfo Target)
+    {
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "UMG" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+    }
 }
