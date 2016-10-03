@@ -79,12 +79,14 @@ void AUeMinecraftCharacter::Tick(float DeltaTime)
 
 void AUeMinecraftCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	// set up gameplay key bindings
+	// set up game-play key bindings
 	check(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("InventoryUp", IE_Pressed, this, &AUeMinecraftCharacter::MoveUpInventorySlot);
+	PlayerInputComponent->BindAction("InventoryDown", IE_Pressed, this, &AUeMinecraftCharacter::MoveDownInventorySlot);
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AUeMinecraftCharacter::TouchStarted);
 	if (EnableTouchscreenMovement(PlayerInputComponent) == false)
 	{
@@ -100,11 +102,41 @@ void AUeMinecraftCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
+	// "turn-rate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AUeMinecraftCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AUeMinecraftCharacter::LookUpAtRate);
+}
+
+int32 AUeMinecraftCharacter::GetCurrentInventorySlot()
+{
+	return CurrentInventorySlot;
+}
+
+bool AUeMinecraftCharacter::AddItemToInventory(AWieldable * Item)
+{
+	if (Item != NULL)
+	{
+		const int32 AvailableSlot = Inventory.Find(nullptr);
+
+		if (AvailableSlot != INDEX_NONE)
+		{
+			Inventory[AvailableSlot] = Item;
+			return true;
+		}
+		else return false;
+	}
+	return false;
+}
+
+UTexture2D * AUeMinecraftCharacter::GetThumbnailAtInventorySlot(uint8 Slot)
+{
+	if (Inventory[Slot] != NULL)
+	{
+		return Inventory[Slot]->PickupThumbnail;
+	}
+	else return nullptr;
 }
 
 void AUeMinecraftCharacter::OnFire()
@@ -227,6 +259,21 @@ bool AUeMinecraftCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AUeMinecraftCharacter::TouchUpdate);
 	}
 	return bResult;
+}
+
+void AUeMinecraftCharacter::MoveUpInventorySlot()
+{
+	CurrentInventorySlot = FMath::Abs((CurrentInventorySlot + 1) % NUM_OF_INVENTORY_SLOTS);
+}
+
+void AUeMinecraftCharacter::MoveDownInventorySlot()
+{
+	if (CurrentInventorySlot == 0)
+	{
+		CurrentInventorySlot = 9;
+		return;
+	}
+	CurrentInventorySlot = FMath::Abs((CurrentInventorySlot - 1) % NUM_OF_INVENTORY_SLOTS);
 }
 
 void AUeMinecraftCharacter::OnHit()

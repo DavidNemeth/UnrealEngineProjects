@@ -14,26 +14,28 @@ AWieldable::AWieldable()
 	WieldableMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WieldableMesh"));
 
 	PickupTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("PickupTrigger"));
+
 	PickupTrigger->bGenerateOverlapEvents = true;
 	PickupTrigger->OnComponentBeginOverlap.AddDynamic(this, &AWieldable::OnRadiusEnter);
 	PickupTrigger->AttachTo(WieldableMesh);
-	
+
 	MaterialType = EMaterial::None;
 	ToolType = ETool::Unarmed;
 
+	bIsActive = true;
 }
 
 // Called when the game starts or when spawned
 void AWieldable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
-void AWieldable::Tick( float DeltaTime )
+void AWieldable::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 	FRotator rotation = WieldableMesh->GetComponentRotation();
 	rotation.Yaw += 1.f;
@@ -42,13 +44,25 @@ void AWieldable::Tick( float DeltaTime )
 
 void AWieldable::OnRadiusEnter(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	//character reference
-	AUeMinecraftCharacter* Character = Cast<AUeMinecraftCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-	//Attach pickup
-	Character->FP_WieldedItem->SetSkeletalMesh(WieldableMesh->SkeletalMesh);
-	Character->MaterialType = MaterialType;
-	Character->ToolType = ToolType;
+	if (bIsActive)
+	{
+		/*Player reference*/
+		AUeMinecraftCharacter* Character = Cast<AUeMinecraftCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+		Character->FP_WieldedItem->SetSkeletalMesh(WieldableMesh->SkeletalMesh);
+		Character->AddItemToInventory(this);
 
+		OnPickedUp();
+	}
+}
+
+void AWieldable::OnPickedUp()
+{
+	WieldableMesh->SetVisibility(false);
+	bIsActive = false;
+}
+
+void AWieldable::OnUsed()
+{
 	Destroy();
 }
 

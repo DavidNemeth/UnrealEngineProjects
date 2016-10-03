@@ -34,7 +34,7 @@ void AUeMinecraftGameMode::ApplyHUDChanges()
 		CurrentWidget->RemoveFromParent();
 	}
 
-	/*Check the hudstate, and apply the hud corresponding to the hud that should be open*/
+	/*Check the HUD state, and apply the HUD corresponding to the HUD that should be open*/
 	switch (HUDState)
 	{
 	case EHUDState::HS_Ingame:

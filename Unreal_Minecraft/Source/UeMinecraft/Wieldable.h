@@ -9,16 +9,16 @@ UCLASS()
 class UEMINECRAFT_API AWieldable : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AWieldable();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	enum ETool : uint8
 	{
@@ -49,9 +49,18 @@ public:
 		USkeletalMeshComponent* WieldableMesh;
 
 	UPROPERTY(EditAnywhere)
-	UShapeComponent* PickupTrigger;
+		UShapeComponent* PickupTrigger;
+
+	UPROPERTY(EditDefaultsOnly)
+		UTexture2D* PickupThumbnail;
+
+	bool bIsActive;
 
 	UFUNCTION()
 		void OnRadiusEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+
+	void OnPickedUp();
+
+	void OnUsed();
+
 };

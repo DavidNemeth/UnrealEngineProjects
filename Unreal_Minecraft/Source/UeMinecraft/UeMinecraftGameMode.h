@@ -20,37 +20,37 @@ public:
 		HS_Craft_Menu,
 	};
 
-	/*checks the HUD state, and calls the applyhud to apply*/
+	/*checks the HUD state, and calls the apply HUD to apply*/
 	void ApplyHUDChanges();
 
-	/*gets the hud state*/
+	/*gets the HUD state*/
 	uint8 GetHUDState();
 
-	/*setter for the hudstate*/
+	/*setter for the HUD state*/
 	UFUNCTION(BlueprintCallable, Category = "HUD Functions")
 		void ChangeHUDState(uint8 NewState);
 
-	/*apply hud to the screen, return true if successful*/
+	/*apply HUD to the screen, return true if successful*/
 	bool ApplyHUD(TSubclassOf<class UUserWidget> WidgetToApply, bool ShowMouseCursor, bool EnableClickEvents);
 
 protected:
 
-	/*The current hudstate*/
+	/*The current HUD state*/
 	uint8 HUDState;
 
-	/*the hud to be shown ingame*/
+	/*the HUD to be shown in-game*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprints Widgets", Meta = (BlueprintProtected = "true"))
 		TSubclassOf<class UUserWidget> IngameHUDClass;
 
-		/*the hud to be shown in the inventory*/
+		/*the HUD to be shown in the inventory*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprints Widgets", Meta = (BlueprintProtected = "true"))
 		TSubclassOf<class UUserWidget> InventoryHUDClass;
 
-		/*the hud to be shown in the crafting menu*/
+		/*the HUD to be shown in the crafting menu*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Blueprints Widgets", Meta = (BlueprintProtected = "true"))
 		TSubclassOf<class UUserWidget> CraftMenuHUDClass;
 
-	/*the current hud*/
+	/*the current HUD*/
 	class UUserWidget* CurrentWidget;
 };
 
