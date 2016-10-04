@@ -139,6 +139,15 @@ private:
 	/*Current inventory slot*/
 	int32 CurrentInventorySlot;
 
+	/*Update the wielded item*/
+	void UpdateWieldedItem();
+
+	/*Gets the currently wielded item*/
+	AWieldable* GetCurrentlyWieldedItem();
+
+	/*Drops the currently wielded item*/
+	void Throw();
+
 	/*Increment and decrement inventory slot*/
 	void MoveUpInventorySlot();
 	void MoveDownInventorySlot();

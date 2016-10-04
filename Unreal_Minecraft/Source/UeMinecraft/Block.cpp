@@ -10,7 +10,7 @@ ABlock::ABlock()
 
 	SM_Block = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlockMesh"));
 	
-	Resistance = 100.f;
+	Resistance = 40.f;
 	BreakingStage = 0.f;
 	MinimumMaterial = 0.f;
 

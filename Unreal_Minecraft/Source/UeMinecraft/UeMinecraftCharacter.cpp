@@ -84,7 +84,7 @@ void AUeMinecraftCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
+	PlayerInputComponent->BindAction("Throw", IE_Pressed, this, &AUeMinecraftCharacter::Throw);
 	PlayerInputComponent->BindAction("InventoryUp", IE_Pressed, this, &AUeMinecraftCharacter::MoveUpInventorySlot);
 	PlayerInputComponent->BindAction("InventoryDown", IE_Pressed, this, &AUeMinecraftCharacter::MoveDownInventorySlot);
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AUeMinecraftCharacter::TouchStarted);
@@ -123,6 +123,7 @@ bool AUeMinecraftCharacter::AddItemToInventory(AWieldable * Item)
 		if (AvailableSlot != INDEX_NONE)
 		{
 			Inventory[AvailableSlot] = Item;
+			UpdateWieldedItem();
 			return true;
 		}
 		else return false;
@@ -135,6 +136,7 @@ UTexture2D * AUeMinecraftCharacter::GetThumbnailAtInventorySlot(uint8 Slot)
 	if (Inventory[Slot] != NULL)
 	{
 		return Inventory[Slot]->PickupThumbnail;
+		UpdateWieldedItem();
 	}
 	else return nullptr;
 }
@@ -261,9 +263,57 @@ bool AUeMinecraftCharacter::EnableTouchscreenMovement(class UInputComponent* Pla
 	return bResult;
 }
 
+void AUeMinecraftCharacter::UpdateWieldedItem()
+{
+	Inventory[CurrentInventorySlot] != NULL ? FP_WieldedItem->SetSkeletalMesh(Inventory[CurrentInventorySlot]->WieldableMesh->SkeletalMesh) : FP_WieldedItem->SetSkeletalMesh(NULL);
+}
+
+AWieldable * AUeMinecraftCharacter::GetCurrentlyWieldedItem()
+{
+	return Inventory[CurrentInventorySlot] != NULL ? Inventory[CurrentInventorySlot] : nullptr;
+}
+
+void AUeMinecraftCharacter::Throw()
+{
+	/*Get the currently wielded item*/
+	AWieldable* ItemToThrow = GetCurrentlyWieldedItem();
+
+	/*Ray-cast to find drop location*/
+	FHitResult LinetraceHit;
+
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector EndTrace = (FirstPersonCameraComponent->GetForwardVector() * Reach) + StartTrace;
+
+	FCollisionQueryParams CQP;
+	CQP.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(LinetraceHit, StartTrace, EndTrace, ECollisionChannel::ECC_WorldDynamic, CQP);
+
+	FVector DropLocation = EndTrace;
+
+	if (LinetraceHit.GetActor() != NULL)
+	{
+		DropLocation = (LinetraceHit.ImpactPoint + 20.f);
+	}
+
+	if (ItemToThrow != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			ItemToThrow->SetActorLocationAndRotation(DropLocation, FRotator::ZeroRotator);
+			ItemToThrow->Hide(false);
+			Inventory[CurrentInventorySlot] = NULL;
+			UpdateWieldedItem();
+		}
+	}
+
+}
+
 void AUeMinecraftCharacter::MoveUpInventorySlot()
 {
 	CurrentInventorySlot = FMath::Abs((CurrentInventorySlot + 1) % NUM_OF_INVENTORY_SLOTS);
+	UpdateWieldedItem();
 }
 
 void AUeMinecraftCharacter::MoveDownInventorySlot()
@@ -271,9 +321,11 @@ void AUeMinecraftCharacter::MoveDownInventorySlot()
 	if (CurrentInventorySlot == 0)
 	{
 		CurrentInventorySlot = 9;
+		UpdateWieldedItem();
 		return;
 	}
 	CurrentInventorySlot = FMath::Abs((CurrentInventorySlot - 1) % NUM_OF_INVENTORY_SLOTS);
+	UpdateWieldedItem();
 }
 
 void AUeMinecraftCharacter::OnHit()

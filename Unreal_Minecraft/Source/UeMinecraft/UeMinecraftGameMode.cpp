@@ -31,7 +31,7 @@ void AUeMinecraftGameMode::ApplyHUDChanges()
 	/*remove previous HUD when we apply new one*/
 	if (CurrentWidget != nullptr)
 	{
-		CurrentWidget->RemoveFromParent();
+		CurrentWidget->RemoveFromParent();		
 	}
 
 	/*Check the HUD state, and apply the HUD corresponding to the HUD that should be open*/
