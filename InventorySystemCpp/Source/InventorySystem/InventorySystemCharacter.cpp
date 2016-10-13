@@ -78,6 +78,7 @@ AInventorySystemCharacter::AInventorySystemCharacter()
 
 	// Uncomment the following line to turn motion controllers on by default:
 	//bUsingMotionControllers = true;
+	Reach = 250.f;
 }
 
 void AInventorySystemCharacter::BeginPlay()
@@ -101,6 +102,13 @@ void AInventorySystemCharacter::BeginPlay()
 	}
 }
 
+void AInventorySystemCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CheckForInteractables();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -111,6 +119,9 @@ void AInventorySystemCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	InputComponent->BindAction("Interact", IE_Pressed, this, &AInventorySystemCharacter::Interact);
+	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AInventorySystemCharacter::ToggleInventory);
 
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AInventorySystemCharacter::TouchStarted);
 	if (EnableTouchscreenMovement(PlayerInputComponent) == false)
@@ -282,4 +293,49 @@ bool AInventorySystemCharacter::EnableTouchscreenMovement(class UInputComponent*
 		PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AInventorySystemCharacter::TouchUpdate);
 	}
 	return bResult;
+}
+
+void AInventorySystemCharacter::ToggleInventory()
+{
+	/*code to open inventory*/
+}
+
+void AInventorySystemCharacter::Interact()
+{
+	if (CurrentInteractable != nullptr)
+	{
+		CurrentInteractable->Interact_Implementation();
+	}
+}
+
+void AInventorySystemCharacter::CheckForInteractables()
+{
+	/*To line-trace, get the start and end traces*/
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector EndTrace = (FirstPersonCameraComponent->GetForwardVector * Reach) + StartTrace;
+
+	/*Declare a hit-result to store the ray-cast hit in*/
+	FHitResult HitResult;
+
+	/*Initialize the query params - ignore the actor*/
+	FCollisionQueryParams CQP;
+	CQP.AddIgnoredActor(this);
+
+	/*Cast line-trace*/
+	GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
+
+	AInteractable* PotentialInteractable = Cast<AInteractable>(HitResult.GetActor());
+
+	if (PotentialInteractable == NULL)
+	{
+		HelpText = FString("");
+		CurrentInteractable = nullptr;
+		return;
+	}
+	else
+	{
+		CurrentInteractable = PotentialInteractable;
+		HelpText = PotentialInteractable->InteractableHelpText;
+	}
+
 }
