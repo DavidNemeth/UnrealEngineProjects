@@ -138,7 +138,7 @@ private:
 	float Reach;
 
 	/*The intractable the player currently looking at*/
-	AInteractable CurrentInteractable;
+	AInteractable* CurrentInteractable;
 
 	/*Toggles the inventory*/
 	void ToggleInventory();

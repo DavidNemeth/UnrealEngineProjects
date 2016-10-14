@@ -312,7 +312,7 @@ void AInventorySystemCharacter::CheckForInteractables()
 {
 	/*To line-trace, get the start and end traces*/
 	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
-	FVector EndTrace = (FirstPersonCameraComponent->GetForwardVector * Reach) + StartTrace;
+	FVector EndTrace = (FirstPersonCameraComponent->GetForwardVector() * Reach) + StartTrace;
 
 	/*Declare a hit-result to store the ray-cast hit in*/
 	FHitResult HitResult;
