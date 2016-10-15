@@ -78,6 +78,35 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		uint32 bUsingMotionControllers : 1;
 
+	/*Players help-text*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		FString HelpText;
+
+
+	/*Amount of gold the player has*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+		int32 Gold;
+
+	/*Updates the coins*/
+	UFUNCTION(BlueprintCallable, Category = "Inventory Functions")
+		void UpdateGold(int32 Amount);
+
+	/*Adds an item to the inventory*/
+	UFUNCTION(BlueprintPure, Category = "Inventory Functions")
+		bool AddItemToInventory(APickup* Item);
+
+	/*Gets the thumbnail for a given inventory slot*/
+	UFUNCTION(BlueprintPure, Category = "Inventory Functions")
+		UTexture2D* GetThumbnailAtInventorySlot(int32 Slot);
+
+	/*Gets the items name for a given inventory slot*/
+	UFUNCTION(BlueprintPure, Category = "Inventory Functions")
+		FString GivenItemNameAtInventorySlot(int32 Slot);
+
+	/*Uses the item at a given inventory slot*/
+	UFUNCTION(BlueprintCallable, Category = "Inventory Functions")
+		void UseItemAtInventorySlot(int32 Slot);
+
 protected:
 
 	/** Fires a projectile. */
@@ -132,8 +161,6 @@ protected:
 
 private:
 
-	/*Players help-text*/
-	FString HelpText;
 	/*The players reach*/
 	float Reach;
 
@@ -148,6 +175,10 @@ private:
 
 	/*Checks for intractable directly in front of the player using line trace called every thick*/
 	void CheckForInteractables();
+
+	/*The players inventory, represented as a tarray of pickup objects*/
+	UPROPERTY(EditAnywhere)
+		TArray<APickup*> Inventory;
 
 public:
 	/** Returns Mesh1P subobject **/

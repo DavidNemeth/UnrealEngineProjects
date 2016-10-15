@@ -143,6 +143,57 @@ void AInventorySystemCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AInventorySystemCharacter::LookUpAtRate);
 }
 
+void AInventorySystemCharacter::UpdateGold(int32 Amount)
+{
+	Gold = Gold + Amount;
+}
+
+bool AInventorySystemCharacter::AddItemToInventory(APickup * Item)
+{
+	if (Item != NULL)
+	{
+		const int32 AvailableSlot = Inventory.Find(nullptr); /*Finds first empty inventory slot*/
+		if (AvailableSlot != INDEX_NONE)
+		{
+			Inventory[AvailableSlot] = Item;
+			return true;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("You cant carry any more items!"));
+			return false;
+		}
+	}
+	else return false;
+}
+
+UTexture2D * AInventorySystemCharacter::GetThumbnailAtInventorySlot(int32 Slot)
+{
+	if (Inventory[Slot] != NULL)
+	{
+		return Inventory[Slot]->PickupThumbnail;
+	}
+	else return nullptr;
+}
+
+FString AInventorySystemCharacter::GivenItemNameAtInventorySlot(int32 Slot)
+{
+	if (Inventory[Slot] != NULL)
+	{
+		return Inventory[Slot]->ItemName;
+	}
+	return FString("None");
+}
+
+void AInventorySystemCharacter::UseItemAtInventorySlot(int32 Slot)
+{
+	if (Inventory[Slot] != NULL)
+	{
+		Inventory[Slot]->Use_Implementation();
+		Inventory[Slot] = NULL; /*Delete item once used*/
+	}
+}
+
 void AInventorySystemCharacter::OnFire()
 {
 	// try and fire a projectile
