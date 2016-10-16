@@ -25,9 +25,10 @@ void APickup::Interact_Implementation()
 
 	AInventorySystemCharacter* Character = Cast<AInventorySystemCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
 
-	/*Put code here that places the item into the characters inventory*/
-
-	OnPickedUp();
+	if (Character->AddItemToInventory(this))
+	{
+		OnPickedUp();
+	}
 
 }
 

@@ -4,6 +4,7 @@
 #include "InventorySystemCharacter.h"
 #include "InventorySystemProjectile.h"
 #include "Animation/AnimInstance.h"
+#include "InventorySystemGameMode.h"
 #include "GameFramework/InputSettings.h"
 #include "Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "MotionControllerComponent.h"
@@ -86,6 +87,9 @@ void AInventorySystemCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	Inventory.SetNum(4);
+
+	CurrentInteractable = nullptr;
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
@@ -176,7 +180,7 @@ UTexture2D * AInventorySystemCharacter::GetThumbnailAtInventorySlot(int32 Slot)
 	else return nullptr;
 }
 
-FString AInventorySystemCharacter::GivenItemNameAtInventorySlot(int32 Slot)
+FString AInventorySystemCharacter::GetItemNameAtInventorySlot(int32 Slot)
 {
 	if (Inventory[Slot] != NULL)
 	{
@@ -348,7 +352,18 @@ bool AInventorySystemCharacter::EnableTouchscreenMovement(class UInputComponent*
 
 void AInventorySystemCharacter::ToggleInventory()
 {
-	/*code to open inventory*/
+	/*Check players HUD state, if inventory is open then close, otherwise open it*/
+
+	AInventorySystemGameMode* GameMode = Cast<AInventorySystemGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (GameMode->GetHUDState() == GameMode->HS_Ingame)
+	{
+		GameMode->ChangeHUDState(GameMode->HS_Inventory);
+	}
+	else
+	{
+		GameMode->ChangeHUDState(GameMode->HS_Ingame);
+	}
 }
 
 void AInventorySystemCharacter::Interact()

@@ -101,7 +101,7 @@ public:
 
 	/*Gets the items name for a given inventory slot*/
 	UFUNCTION(BlueprintPure, Category = "Inventory Functions")
-		FString GivenItemNameAtInventorySlot(int32 Slot);
+		FString GetItemNameAtInventorySlot(int32 Slot);
 
 	/*Uses the item at a given inventory slot*/
 	UFUNCTION(BlueprintCallable, Category = "Inventory Functions")
